@@ -4,23 +4,14 @@ services:
     build: ./backend
     ports:
       - '3001:3000'
-    depends_on:
-      - mysql
     environment:
-      MYSQL_HOST: mysql
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_DB: aplicacao
+      MYSQL_HOST: segunda.cf4gic4aiuhl.us-east-2.rds.amazonaws.com
+      MYSQL_USER: master
+      MYSQL_PASSWORD: Davi1603
+      MYSQL_DB: segunda
     volumes:
       - ./backend/uploads:/uploads
   frontend:
     build: ./frontend
     ports:
       - '3000:3000'
-  mysql:
-    image: mysql:5.7
-    ports:
-      - '3307:3306'
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: aplicacao
