@@ -75,7 +75,7 @@ app.use(cors());
 app.get("/dados", (req, res) => {
   connection.query("SELECT * FROM usuarios", (err, results) => {
     if (err) {
-      console.error("Erro ao buscar dads:", err);
+      console.error("Erro ao buscar dados:", err);
       res.status(500).json({ error: "Erro ao buscar dados" });
     } else {
       res.json(results);
