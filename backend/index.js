@@ -10,7 +10,7 @@ const upload = multer({
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
-      cb(new Error("O arquivo não é uma imagem."), false);
+      cb(new Error("O arquivo nãoé uma imagem."), false);
     }
   },
 });
