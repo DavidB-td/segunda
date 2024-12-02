@@ -6,12 +6,11 @@ const path = require("path");
 const app = express();
 const upload = multer({
   dest: "uploads/",
-  limits: { fileSize: 10 * 1024 * 1024 }, // Limite de tamanho de arquivo: 10MB
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
-      cb(new Error("File is not an image"), false);
+      cb(new Error("O arquivo nãoé uma imagem."), false);
     }
   },
 });
@@ -30,16 +29,16 @@ function handleDisconnect() {
 
   connection.connect((err) => {
     if (err) {
-      console.error("Error connecting to MySQL:", err);
+      console.error("Erro ao conectar ao MySQL:", err);
       setTimeout(handleDisconnect, 2000);
     } else {
-      console.log("Connected to MySQL");
+      console.log("Conectado ao MySQL");
       setupDatabase();
     }
   });
 
   connection.on("error", (err) => {
-    console.error("Database error:", err);
+    console.error("Erro no banco de dados:", err);
     if (err.code === "PROTOCOL_CONNECTION_LOST") {
       handleDisconnect();
     } else {
@@ -51,7 +50,7 @@ function handleDisconnect() {
 function setupDatabase() {
   connection.query(
     `
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS usuarios (
             id INT AUTO_INCREMENT PRIMARY KEY,
             nome VARCHAR(255) NOT NULL,
             sobrenome VARCHAR(255) NOT NULL,
@@ -60,9 +59,9 @@ function setupDatabase() {
     `,
     (err) => {
       if (err) {
-        console.error("Error creating table:", err);
+        console.error("Erro ao criar a tabela:", err);
       } else {
-        console.log('Table "users" exists or created successfully');
+        console.log('Tabela "usuarios" criada ou já existente');
       }
     }
   );
@@ -73,30 +72,30 @@ handleDisconnect();
 app.use(express.json());
 app.use(cors());
 
-app.get("/data", (req, res) => {
-  connection.query("SELECT * FROM users", (err, results) => {
+app.get("/dados", (req, res) => {
+  connection.query("SELECT * FROM usuarios", (err, results) => {
     if (err) {
-      console.error("Error fetching data:", err);
-      res.status(500).json({ error: "Error fetching data" });
+      console.error("Erro ao buscar dados:", err);
+      res.status(500).json({ error: "Erro ao buscar dados" });
     } else {
       res.json(results);
     }
   });
 });
 
-app.post("/data", upload.single("foto"), (req, res) => {
+app.post("/dados", upload.single("foto"), (req, res) => {
   const { nome, sobrenome } = req.body;
   const foto = req.file.filename;
 
-  console.log("Received data:", { nome, sobrenome, foto });
+  console.log("Dados recebidos:", { nome, sobrenome, foto });
 
-  const query = "INSERT INTO users (nome, sobrenome, foto) VALUES (?, ?, ?)";
+  const query = "INSERT INTO usuarios (nome, sobrenome, foto) VALUES (?, ?, ?)";
   connection.query(query, [nome, sobrenome, foto], (err, result) => {
     if (err) {
-      console.error("Error inserting data:", err);
-      res.status(500).json({ error: "Error inserting data" });
+      console.error("Erro ao inserir dados:", err);
+      res.status(500).json({ error: "Erro ao inserir dados" });
     } else {
-      console.log("Data inserted successfully:", result);
+      console.log("Dados inseridos com sucesso:", result);
       res.sendStatus(200);
     }
   });
@@ -105,5 +104,5 @@ app.post("/data", upload.single("foto"), (req, res) => {
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.listen(3000, () => {
-  console.log("Server running on port 3000");
+  console.log("Servidor rodando na porta 3000");
 });
