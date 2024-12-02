@@ -31,6 +31,12 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
+      - name: Verificar Status do Repositório
+        run: |
+          git status
+          git fetch origin
+          git pull origin staging
+
       - name: Instalar dependências
         run: npm install
 
